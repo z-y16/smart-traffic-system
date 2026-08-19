@@ -1,0 +1,57 @@
+# BoT-SORT tuned for road traffic — used by traffic_vision.VehicleDetector
+#
+# Why BoT-SORT instead of the stock ByteTrack config the project used before:
+# it adds global motion compensation and (optionally) appearance matching, so
+# vehicles keep their ID through occlusions and camera shake. Every ID switch
+# corrupts a speed measurement (the tracker "teleports" a vehicle), so ID
+# stability is the single biggest lever on speed accuracy.
+
+tracker_type: botsort
+
+# Detections above this join tracks in the first association pass. 0.35 keeps
+# genuinely weak boxes out of the high-confidence stage while still letting
+# them recover a track in the second pass.
+track_high_thresh: 0.35
+track_low_thresh: 0.10
+
+# Higher than default so a flicker of noise does not spawn a phantom vehicle.
+# Combined with min_track_frames in VisionConfig this makes ghost counts rare.
+new_track_thresh: 0.45
+
+# ~4.5 s of memory at 20 fps. Raised from 45: on the dark zoomed-in footage a
+# vehicle regularly drops out for longer than two seconds (low contrast, not
+# just occlusion), and every track that dies is re-acquired under a fresh id.
+# Since Unique Vehicles counts distinct ids, each of those re-acquisitions was
+# being reported as another vehicle.
+track_buffer: 90
+
+# Vehicles move predictably and boxes overlap heavily in dense traffic, so a
+# slightly stricter match threshold reduces cross-assignment between cars in
+# adjacent lanes.
+match_thresh: 0.75
+fuse_score: True
+
+# Cancels apparent motion caused by camera shake / wind on a pole-mounted or
+# handheld camera. Without it, a shaking camera reads as "all traffic moving".
+#
+# Disabled: sparseOptFlow runs full-frame optical flow on the CPU every frame
+# and cost 20 ms of a 57 ms budget — a third of detector time. Measured camera
+# drift on all three clips in vedios/ is sub-pixel (p95 = 0.25-0.45 px @960
+# wide), i.e. the mounting is static and there is no shake to cancel. Setting
+# this back to sparseOptFlow is the first thing to do if the camera is ever
+# moved to a windy outdoor pole or held by hand.
+gmc_method: none
+
+# Appearance re-identification using the detector's own features ("auto"), so
+# no extra model download is required. Costs a few ms per frame and buys back
+# IDs after occlusion.
+# `appearance_thresh` is a *minimum* similarity for a ReID match, so lowering it
+# makes re-identification more willing to hand a returning vehicle its old id
+# back. 0.8 (the ultralytics default) is tuned to avoid identity swaps in
+# daylight; at night, headlight glare and low contrast push a genuine match
+# below it and the vehicle comes back as a stranger. 0.55 buys back those ids.
+# Raise it again if two different cars are ever seen trading identities.
+proximity_thresh: 0.4
+appearance_thresh: 0.55
+with_reid: True
+model: auto

@@ -1,0 +1,11 @@
+import streamlit as st
+ 
+st.title("📹 Live Camera Feed")
+ 
+# Stream video directly from your laptop
+VIDEO_URL = "http://192.168.1.25:8502/video_feed"
+ 
+st.markdown(
+    f'<img src="{VIDEO_URL}" style="width:100%; max-width:1280px; border-radius:10px; border: 2px solid #333;">',
+    unsafe_allow_html=True,
+)

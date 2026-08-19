@@ -1,0 +1,56 @@
+# ---- Video footage (12 GB, most files exceed GitHub's 100 MB limit) ----
+uploads/
+vedios/
+out_demo/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# ---- graphify / serena tooling (vendored checkouts with their own .git) ----
+graphify/
+graphify-out/
+serena-src/
+graphify.zip
+.graphifyignore
+.claude/skills/graphify/
+
+# ---- Model weights: keep only yolo11m.pt (default) + emergency_cls.pt (custom) ----
+*.pt
+!yolo11m.pt
+!emergency_cls.pt
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+
+# ---- Generated run output ----
+sessions/
+logs/
+*.log
+SmartTrafficSystem/logs/*
+!SmartTrafficSystem/logs/.gitkeep
+traffic_all_sessions.csv
+traffic_all_sessions.xlsx
+traffic_all_vehicles.csv
+
+# ---- Scratch / superseded ----
+_to_delete/
+_superseded/
+poster_v2_source.zip
+GDP_Poster_A1_v2_preview.png
+gdp presentation mid point.pptx
+Screenshot*.png
+error.png
+detection.png
+snapshot_*.png
+
+# ---- Machine-local ----
+.claude/settings.local.json
+.DS_Store
+Thumbs.db

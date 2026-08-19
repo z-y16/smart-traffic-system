@@ -1,0 +1,333 @@
+===============================================================================
+HOW THE WHOLE SMART TRAFFIC SYSTEM WORKS
+The full tour, from "a camera looking at a road" to "the traffic light changes"
+===============================================================================
+
+
+THE ONE-SENTENCE VERSION
+------------------------
+
+It's a traffic warden who never blinks, never gets bored, and writes down
+everything: it watches a road through a camera, works out how many vehicles
+there are and how fast they're going, decides whether the road is busy, changes
+the traffic light to suit, spots ambulances, tells some real electronics what
+to do, and keeps a diary of all of it.
+
+
+IT'S REALLY TWO PROGRAMS
+------------------------
+
+    THE CV NODE  (broadcast_server.py)
+        The eyes and the hands. It needs the camera and a good graphics card.
+        It does all the watching, thinking, and controlling.
+
+    THE DASHBOARD  (SmartTrafficSystem/)
+        The control room screen. Just a website. Shows charts and buttons.
+
+They're kept separate on purpose, because they need different things. The node
+needs to be where the camera is. The dashboard just needs a browser — so it can
+run on a laptop in a different room, or a different building.
+
+You start both at once by double-clicking START HERE.bat.
+
+
+===============================================================================
+THE JOURNEY OF ONE PICTURE
+===============================================================================
+
+Every single frame of video goes through this whole chain. Let's follow one.
+
+
+STEP 0 — WHERE THE PICTURE COMES FROM
+
+Three choices, and the system doesn't care which:
+    * a camera plugged in
+    * a video file (you can drag one in from the dashboard while it's running)
+    * a road camera somewhere on the internet (a stream URL)
+
+One rule: the camera must be STILL. On a pole, a bridge, a gantry. If the
+camera itself moves, then everything in the picture appears to move, and the
+system would think parked cars were driving. Everything below depends on this.
+
+THE CLOCK TRICK (this one is cleverer than it sounds)
+
+Speed = distance ÷ TIME. So which clock do you use?
+
+If you use the real clock on the wall, you get the wrong answer for a video.
+Say the video was filmed at 30 pictures per second, but your computer is slow
+and only manages 20. Now every car seems to take longer to cross the screen
+than it really did, and you report speeds that are far too slow. Use a fast
+computer instead and it races through the video and reports silly fast speeds.
+
+That's ridiculous — the cars in the video drove at one speed, and it has
+nothing to do with which computer is watching them.
+
+So a video gets its OWN clock, which ticks one frame at a time no matter how
+fast or slow the computer is. We tested this by driving a fake car at exactly
+16.2 km/h through a real video at four different speeds — normal, double speed,
+half speed, and as fast as the computer could go. All four answers came out at
+16.2 km/h. They agreed exactly.
+
+
+STEP 1 — FIND THE VEHICLES  (YOLO)
+
+We use a model called YOLO (yolo11m). You give it a picture and it draws a box
+round everything it recognises and names it: car, motorcycle, bus, truck.
+
+Three things we do to make it better at this job:
+
+    * We show it a BIG picture (1280 pixels, not 640). This is the single
+      biggest improvement for far-away and night-time vehicles. Measured on our
+      night footage: the small size found 15.6 vehicles per picture, the big
+      size found 19.6.
+    * We use "FP16", a maths shortcut that makes it about twice as fast — which
+      is what pays for the big picture.
+    * We tell it to only look for vehicles. It's not allowed to accidentally
+      decide a person or a traffic light is a car.
+
+Interesting: we tried a NEWER model (yolo12m) and it was worse for us — 33%
+slower AND found fewer vehicles. So we kept yolo11m. Newer isn't always better.
+
+
+STEP 2 — STICK A NAME TAG ON EACH ONE  (tracking)
+
+YOLO has no memory. Every picture, it starts from scratch. So it can tell you
+"there are 5 cars", but not "that's the SAME red car from a second ago".
+
+A tracker (BoT-SORT) fixes that by putting a numbered sticker on each vehicle
+and keeping it there frame after frame. Without this you couldn't measure speed
+(you need the same car in two places), and you couldn't count vehicles properly
+(you'd count the same car hundreds of times).
+
+Two safety rules:
+    * A vehicle must survive 3 frames before we believe in it. This stops a
+      one-frame flicker from being counted as a car.
+    * We take a VOTE on what kind of vehicle it is, over the last 30 frames,
+      and the winner has to properly beat the current answer. Otherwise a van
+      would flicker "car, truck, car, truck" forever.
+
+
+STEP 3 — HOW FAST IS IT GOING?
+
+Here's the problem: the camera sees PIXELS, and pixels aren't metres. A car far
+away moves only a few pixels while going the same speed as a close car that
+moves loads of pixels. So "pixels per second" is not a speed at all.
+
+We need a way to turn pixels into real metres. Two ways:
+
+    AUTOMATIC (works instantly, roughly ±25% accurate)
+    We know a real car is about 1.5 m tall and a bus about 3.2 m. So we look at
+    how tall the box is in pixels, and that tells us how many metres one pixel
+    is worth AT THAT EXACT SPOT. Clever bit: every vehicle carries its own
+    scale, so near and far are both handled automatically.
+
+    CALIBRATED (do it once, ±5% accurate)
+    Run calibrate_speed.py, click 4 corners of a rectangle on the road, and
+    type in how big it really is in metres. A lane is about 3.5 m wide — easy
+    to look up. Now the system knows the real shape of the road.
+
+Then, to actually measure:
+    1. We use the BOTTOM-MIDDLE of the box — where the tyres touch the road.
+       That's the only part of the vehicle that's actually on the ground.
+    2. We measure over 0.8 seconds, not between two frames. Boxes wobble a bit
+       every frame, and we don't want to report wobble as speed.
+    3. Anything over 200 km/h is thrown away — that's not a car, that's the
+       tracker mixing up two vehicles.
+
+Tested: a fake car scripted to drive at exactly 18, 36 and 72 km/h was measured
+at 18.0, 36.0 and 72.0.
+
+IMPORTANT: a calibration belongs to ONE camera in ONE position. Move the
+camera, and you have to do it again.
+
+
+STEP 4 — IS THE ROAD BUSY?  (the congestion index)
+
+We turn "how bad is it" into one number between 0 and 1. It's made of two
+ingredients:
+
+    HOW SLOW is everyone?  (60% of the score)
+    HOW FULL is the road?  (40% of the score)
+
+For "how full", not all vehicles are equal. A bus takes up way more room than a
+motorbike, so they're weighted:
+
+        motorcycle = 0.5        car = 1        bus = 3        truck = 3
+
+Then the number becomes a word: FREE, MODERATE, or HEAVY.
+
+Two rules stop it saying stupid things:
+
+    * An empty road is never congested. Sounds obvious! But the first version
+      remembered the last speed it saw, so an empty road could still be
+      reported as HEAVY traffic. Now, zero vehicles = zero congestion, full stop.
+
+    * One slow car is not a traffic jam — it's one slow driver. So "everyone is
+      slow" only counts once there are actually about 3+ vehicles around to be
+      slow together.
+
+There's also a "stickiness" rule so the word doesn't flicker between MODERATE
+and HEAVY every single frame when the number is sitting right on the line —
+because the LEDs and the servo would physically chatter back and forth.
+
+
+STEP 5 — IS IT AN EMERGENCY VEHICLE?
+
+Two helpers — CLIP reads the paintwork, the siren detector watches for a
+flashing beacon. This has its own file:
+
+        --> see HOW_EMERGENCY_DETECTION_WORKS.txt
+
+Short version: a flashing beacon means it's on a call right now. Paintwork
+alone means it's an ambulance, but possibly a parked one.
+
+
+STEP 6 — DECIDE THE TRAFFIC LIGHT
+
+The light is "demand-responsive" — it serves traffic when there IS traffic:
+
+        HEAVY      ->  GREEN   (let the queue clear)
+        MODERATE   ->  GREEN
+        FREE       ->  RED     (nobody to serve, so don't hold a green)
+        any change ->  YELLOW for 5 seconds first
+
+Two rules make it behave like a real traffic light:
+
+    * ONCE YELLOW STARTS, IT FINISHES. All five seconds, every time, and it
+      always ends up at the colour it was heading for. Real traffic lights never
+      abandon an amber halfway through, and neither does this.
+    * MINIMUM WAIT. Green and red are held at least 3 seconds. Without this,
+      traffic changing during the yellow could produce a green light that lasts
+      a single frame.
+
+We tested this by flipping the traffic level every half second for two whole
+minutes. The light never once produced a momentary phase, and never broke the
+red->yellow->green->yellow->red order.
+
+A SURPRISING DECISION: an ambulance does NOT take over the traffic light.
+
+Why not? Because emergency vehicles are legally allowed to drive through a red
+light anyway. Grabbing the light wouldn't help the ambulance at all — it would
+just mess everything up for everyone else. So instead, a special LED strip
+lights up to tell nearby drivers to MOVE OVER and make space, and the LCD
+screen names the vehicle. The traffic light carries on doing its normal job.
+
+
+STEP 7 — TELL THE ELECTRONICS  (the Arduino)
+
+The node talks over a USB cable to real hardware:
+
+        the traffic light LEDs (red / yellow / green)
+        an LCD screen (shows the status, names the emergency vehicle)
+        a servo motor (a barrier arm that moves with the light phase)
+        an emergency LED strip (pin 6 — the "make space" one)
+        a speed bump that can raise and lower
+        a lane divider that can give more lanes to the busier direction
+
+Only the node is allowed to hold the USB port — on Windows two programs
+genuinely cannot open the same port at once. So when you press a button on the
+dashboard, it doesn't talk to the Arduino itself; it asks the node to do it.
+That's exactly what lets the dashboard live on another computer.
+
+And when a command is sent, the reply says whether it actually reached the
+wire — so if someone unplugged the Arduino, you SEE that, instead of the button
+pretending it worked.
+
+
+STEP 8 — WRITE IT ALL DOWN
+
+Two diaries, because they answer two different questions:
+
+    TODAY'S DIARY  (traffic_history.csv / .xlsx)
+        Just this run. This is what you show in a demo. Starts fresh each time
+        — but the old one is safely moved into sessions/ first, never deleted.
+
+    THE FOREVER DIARY  (traffic_all_sessions.csv / .xlsx)
+        Every run ever, added to and never reset.
+
+Each one has several sheets: a live status, every measurement, one row per
+vehicle that passed through (with its class, how long it took, and its average
+and top speed), and a summary of the whole session.
+
+
+STEP 9 — SHOW IT ON SCREEN  (the dashboard)
+
+A website with charts that each answer a real question:
+
+    Demand by Hour ......... When is this road busiest?
+    Speed vs Congestion .... What does being busy actually cost in journey time?
+    Signal Behaviour ....... How is the light spending its time?
+    Distribution ........... Is it always bad, or occasionally terrible?
+                             (an average can't tell those two apart!)
+    Session Comparison ..... Is it getting worse over time?
+
+Every chart comes with a "how to read this" note, and there's a panel that
+turns the numbers into plain sentences — the busiest hour, whether jams are
+constant or occasional, how much speed is lost when the road fills up.
+
+
+===============================================================================
+THE BIT TO BE PROUDEST OF
+===============================================================================
+
+Almost every design decision here exists because something went wrong first,
+got measured, and got fixed. That's the real story of the project:
+
+    "Empty road, HEAVY traffic"     -> now zero vehicles means zero congestion
+    "Slow computer, slow cars"      -> videos got their own clock
+    "One slow driver = a jam"       -> speed only counts with 3+ vehicles
+    "The light flickered"           -> stickiness + minimum wait added
+    "29% of cars called police"     -> the unfair vote was made fair
+    "A red car under a streetlight" -> the switch-vs-slide test
+    "Newer model must be better"    -> measured it; it wasn't; kept the old one
+
+And it's all held down by TESTS — 769 automatic checks, and right now every
+single one of them passes:
+
+        217  the vision pipeline
+        124  hardware commands, the web server, the launcher
+        113  video sources, uploads and playback
+        100  the dashboard buttons and controls
+         90  the analytics maths
+         69  all 8 dashboard pages render
+         56  the traffic light timing
+
+If someone changes something and accidentally breaks the traffic light timing
+or the speed maths, the tests catch it immediately instead of at the demo.
+
+(On Windows you must run them with PYTHONIOENCODING=utf-8 set first. Otherwise
+two of them break — not because anything is wrong, but because the old Windows
+console can't print the emoji on a dashboard button.)
+
+
+===============================================================================
+HOW FAST IS IT?
+===============================================================================
+
+Measured on the laptop's graphics card (an RTX 4050), on real 1080p footage:
+
+    Finding + tracking the vehicles ....... 29 ms   (about 66% of the work)
+    Reading the paintwork (CLIP) ........... 5 ms   (about 12%)
+    Watching for flashing beacons .......... 10 ms  (about 22%)
+    ---------------------------------------------
+    Everything, start to finish ............ 45 ms  = about 22 pictures/second
+
+In daylight it's faster — about 28 pictures a second — because there are fewer
+beacons to measure and the paint is easier to read.
+
+Two things worth knowing:
+
+    * Finding the vehicles is two-thirds of the work. So if you ever want to
+      make it faster, that's the only part worth touching. Making the maths
+      faster would save nothing you could measure.
+
+    * Making the PICTURE bigger helps a lot. Making the MODEL bigger doesn't.
+      Going from a small picture to a big one finds about 5 more vehicles per
+      frame. Going from a small model to a big one at the same picture size
+      finds... nothing extra. Sometimes slightly fewer! The thing that limits
+      us is how many pixels a far-away car takes up, not how clever the model
+      is.
+
+All the numbers, and how they were measured, are in METRICS.md.
+
+===============================================================================

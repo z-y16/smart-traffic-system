@@ -1,0 +1,48 @@
+# ── CV node (broadcast_server.py, traffic_vision.py, calibrate_speed.py) ──
+opencv-python>=4.9.0
+ultralytics>=8.2.0        # pulls in torch; install the CUDA build for GPU speed
+flask>=3.0.0
+openpyxl>=3.1.0
+numpy>=1.26.0
+pyserial>=3.5
+Pillow>=10.0.0
+pygrabber>=0.2         # Windows: names cameras so --source droidcam works (optional)
+
+# ── Emergency vehicle detection ───────────────────────────────────────────
+# What raises emergency mode is the *siren light* (siren_vision.py), and that
+# needs nothing beyond OpenCV and NumPy — no weights, no download, no GPU. The
+# packages below are only for recognising the vehicle's livery, which names the
+# type when a red beacon could be an ambulance or a fire engine.
+#
+# CLIP identifies ambulances, police cars and fire trucks with no training and
+# no dataset, which is why it is the default. Ultralytics installs it
+# automatically the first time it is needed; install it up front to avoid a
+# mid-run download:
+clip @ git+https://github.com/ultralytics/CLIP.git
+# The ViT-B/16 weight file (~335 MB) downloads on first use and is cached.
+# Without this package the system still runs and still detects sirens; what is
+# lost is telling an ambulance from a fire engine (--no-emergency-ai makes that
+# explicit).
+
+# ── Training your own livery model (train_emergency_classifier.py, optional) ─
+# Only needed to *build* emergency_cls.pt; running it needs nothing extra.
+# pandas reads the Hugging Face parquet files the training images come in.
+pandas>=2.0.0
+
+# ── Video sources (video_source.py) ───────────────────────────────────────
+# Cameras, video files and direct RTSP/MJPEG/HLS URLs need nothing beyond
+# OpenCV. yt-dlp is only for links that are web *pages* rather than streams —
+# which most public "live traffic camera" links on YouTube are. Without it,
+# such a link is refused with a message saying so; everything else still works:
+yt-dlp>=2024.1.0
+
+# ── Dashboard (SmartTrafficSystem/) ───────────────────────────────────────
+# Install with: pip install -r SmartTrafficSystem/requirements.txt
+# streamlit, plotly, pandas, psutil, Pillow, requests
+
+# ── GPU note ──────────────────────────────────────────────────────────────
+# `pip install ultralytics` installs a CPU-only torch by default, which runs
+# yolo12m at roughly 2 fps. For the ~21 fps this project is tuned for, install
+# the CUDA build first:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+# Verify with: python -c "import torch; print(torch.cuda.is_available())"
