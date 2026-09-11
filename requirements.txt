@@ -41,8 +41,11 @@ yt-dlp>=2024.1.0
 # streamlit, plotly, pandas, psutil, Pillow, requests
 
 # ── GPU note ──────────────────────────────────────────────────────────────
-# `pip install ultralytics` installs a CPU-only torch by default, which runs
-# yolo12m at roughly 2 fps. For the ~21 fps this project is tuned for, install
-# the CUDA build first:
+# `pip install ultralytics` may install a CPU-only PyTorch build. For the GPU
+# configuration used by this project (YOLO11m), install the CUDA-enabled build
+# that matches the machine before installing the remaining requirements.
+# Example for CUDA 12.6:
 #   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 # Verify with: python -c "import torch; print(torch.cuda.is_available())"
+# Refer to METRICS.md for measured project performance instead of relying on a
+# hard-coded FPS value in this dependency file.
