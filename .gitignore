@@ -1,5 +1,6 @@
-# ---- Video footage (12 GB, most files exceed GitHub's 100 MB limit) ----
+# ---- Video footage (large/local-only) ----
 uploads/
+videos/
 vedios/
 out_demo/
 *.mp4
@@ -15,7 +16,7 @@ graphify.zip
 .graphifyignore
 .claude/skills/graphify/
 
-# ---- Model weights: keep only yolo11m.pt (default) + emergency_cls.pt (custom) ----
+# ---- Model weights: keep only the two project models in normal Git ----
 *.pt
 !yolo11m.pt
 !emergency_cls.pt
@@ -29,7 +30,14 @@ venv/
 env/
 *.egg-info/
 
-# ---- Generated run output ----
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- Runtime data ----
+SmartTrafficSystem/data/*.db
+SmartTrafficSystem/data/settings.json
 sessions/
 logs/
 *.log
