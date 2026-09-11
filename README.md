@@ -1,164 +1,108 @@
-# Smart Traffic Management System
+# Smart Traffic Management Software
 
-Computer Vision-Based Smart Traffic Congestion Analytics with Adaptive Signal Optimization.
+Computer-vision traffic analytics and adaptive signal-control software built with Python, YOLO11m, OpenCV and Streamlit.
 
-This Group Design Project combines computer vision, traffic analytics, emergency-vehicle detection, adaptive signal control, microcontroller hardware and a Streamlit dashboard in one prototype.
+This repository is intentionally **software-only**. Physical prototype drawings, Arduino/ESP32 firmware, servo sketches, coursework files and generated runtime data are not kept here.
 
 ## Main features
 
-- **YOLO11m vehicle detection and tracking**
-- **Vehicle counting and traffic-density estimation**
-- **Real km/h speed estimation** using road calibration
-- **Adaptive traffic-light control** with safe red/yellow/green transitions
-- **Emergency-vehicle priority support** using flashing-beacon detection and vehicle recognition
-- **Camera, video-file and network-stream inputs**
-- **Arduino / ESP32 hardware integration**
-- **Streamlit monitoring dashboard**
-- **CSV/XLSX traffic logging and analytics**
-- **Simulation mode** for testing without physical hardware
+- YOLO11m vehicle detection and BoT-SORT tracking
+- Vehicle counting and traffic-density estimation
+- Calibrated vehicle-speed estimation in km/h
+- Congestion analysis and adaptive signal-state logic
+- Emergency-vehicle recognition and flashing-beacon analysis
+- Camera, video-file and network-stream inputs
+- Streamlit monitoring dashboard
+- CSV/XLSX session analytics
+- Simulation/fallback services for software testing
+- Automated tests for the vision pipeline, dashboard, analytics, video sources and signal state machine
 
-## System overview
+## Software architecture
 
 ```text
 Camera / Video / Stream
         |
         v
-Computer Vision Node
-YOLO11m -> Tracking -> Speed -> Congestion -> Emergency Detection
+Video Source
         |
-        +----> Traffic Signal / Hardware Control
+        v
+YOLO11m -> Tracking -> Speed -> Congestion -> Emergency Recognition
         |
-        +----> Logs and Analytics
+        +----> Signal-State Logic
+        +----> Logs / Analytics
+        |
+        v
+CV / API Node
         |
         v
 Streamlit Dashboard
 ```
 
-The CV node performs the real-time processing. The dashboard connects to it over the local network and displays traffic conditions, detections, signal status, emergency state, hardware health and analytics.
+The computer-vision node is implemented mainly in `broadcast_server.py`, `traffic_vision.py` and `video_source.py`. The dashboard and supporting services are under `SmartTrafficSystem/`.
 
 ## Quick start
 
-### 1. Install dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 pip install -r SmartTrafficSystem/requirements.txt
 ```
 
-For NVIDIA GPU acceleration, install the correct CUDA-enabled PyTorch build before installing the remaining packages.
-
-### 2. Start the complete system
-
-On Windows, double-click:
-
-```text
-START HERE.bat
-```
-
-or run:
+Start the complete software stack without physical controllers:
 
 ```bash
-python start.py
-```
-
-This starts both the CV node and the Streamlit dashboard.
-
-Useful examples:
-
-```bash
-python start.py --source road.mp4
-python start.py --source rtsp://...
 python start.py --no-arduino
-python start.py --no-display
 ```
 
-Use `Ctrl+C` to shut the system down cleanly.
-
-## Running the components separately
-
-CV node:
+Examples:
 
 ```bash
-python broadcast_server.py
+python start.py --source road.mp4 --no-arduino
+python start.py --source rtsp://... --no-arduino
+python start.py --no-display --no-arduino
 ```
 
-Dashboard:
-
-```bash
-cd SmartTrafficSystem
-streamlit run app.py
-```
-
-Default services:
-
-- Dashboard: **port 8501**
-- CV node / telemetry stream: **port 8502**
-
-The source can also be changed while the system is running from the dashboard.
-
-## Traffic-signal behaviour
-
-The controller uses a state machine with committed yellow transitions and minimum phase timing to prevent unsafe or unstable rapid switching.
-
-The project supports two signal interpretations:
-
-- **Merge mode** — controls side-road traffic entering a main road according to congestion.
-- **Junction mode** — controls the measured approach directly.
-
-Emergency detection does not force an unsafe instant signal change. The normal transition logic remains active while the system provides emergency-priority indication through the hardware outputs.
+The dashboard normally runs on port `8501`; the CV/API node uses port `8502`.
 
 ## Project structure
 
 ```text
 smart-traffic-system/
-├── start.py                     # Starts the complete system
-├── broadcast_server.py          # CV node and HTTP interface
-├── traffic_vision.py            # Detection, tracking, speed and congestion
-├── traffic_light.py             # Signal state machine
-├── video_source.py              # Camera, file and stream handling
-├── siren_vision.py              # Flashing-beacon detection
-├── emergency_vision.py          # Emergency-vehicle recognition
-├── calibrate_speed.py           # Camera speed calibration
-├── yolo11m.pt                   # Main YOLO model
-├── emergency_cls.pt             # Emergency classification model
-├── SmartTrafficSystem/          # Streamlit dashboard and backend
-├── test_*.py                    # Automated software checks
-├── METRICS.md                   # Measured performance and methodology
-└── requirements.txt             # CV-node dependencies
+├── README.md
+├── docs/
+│   └── SOFTWARE_GUIDE.md       # architecture, pipeline, testing and metrics notes
+├── start.py                    # starts the complete software stack
+├── broadcast_server.py         # CV node and local API
+├── traffic_vision.py           # detection, tracking, speed and congestion
+├── video_source.py             # camera/file/stream input handling
+├── traffic_light.py            # adaptive signal state machine
+├── emergency_vision.py         # emergency-vehicle recognition
+├── siren_vision.py             # flashing-beacon analysis
+├── calibrate_speed.py          # speed-calibration utility
+├── SmartTrafficSystem/         # Streamlit dashboard and backend
+├── trackers/                   # tracker configuration
+├── assets/                     # software test assets
+├── test_*.py                   # automated software tests
+├── yolo11m.pt                  # main vehicle detector
+├── emergency_cls.pt            # emergency classification model
+└── requirements.txt
 ```
 
 ## Testing
 
-The repository includes automated checks for the traffic pipeline, dashboard, analytics, video sources, server integration and traffic-light state machine.
-
-Examples:
+Useful checks:
 
 ```bash
+python -m compileall -q .
 python test_traffic_light.py
 python test_traffic_system.py
+python test_video_source.py
 python test_analytics.py
 ```
 
-## Models and generated data
-
-The repository keeps the two project model files:
-
-- `yolo11m.pt`
-- `emergency_cls.pt`
-
-Large video footage, runtime databases, local settings, session logs and generated outputs are intentionally excluded from Git.
+Some integration tests exercise optional controller/serial interfaces in simulation or through mocked responses. Those files remain because they are software interfaces and part of the application code; no physical-controller firmware is stored in this repository.
 
 ## Documentation
 
-For more detail:
-
-- `METRICS.md` — measured results and how they were obtained
-- `HOW_THE_WHOLE_SYSTEM_WORKS.txt` — complete system explanation
-- `HOW_EMERGENCY_DETECTION_WORKS.txt` — emergency-detection explanation
-- `SmartTrafficSystem/PROJECT_SPEC.md` — dashboard/system specification
-
-## Project
-
-**Programme:** Group Design Project  
-**Theme:** Smart City & AI Traffic Optimization  
-**Project:** Computer Vision-Based Smart Traffic Congestion Analytics with Adaptive Signal Optimization
+See [`docs/SOFTWARE_GUIDE.md`](docs/SOFTWARE_GUIDE.md) for the consolidated explanation of the processing pipeline, emergency recognition, software modules, testing and measured performance.
