@@ -13,7 +13,6 @@ graphify-out/
 serena-src/
 graphify.zip
 .graphifyignore
-.claude/skills/graphify/
 
 # ---- Model weights: keep only yolo11m.pt (default) + emergency_cls.pt (custom) ----
 *.pt
@@ -51,6 +50,7 @@ detection.png
 snapshot_*.png
 
 # ---- Machine-local ----
-.claude/settings.local.json
+.claude/
+CLAUDE.md
 .DS_Store
 Thumbs.db
