@@ -1,0 +1,26 @@
+name: GDP software checks
+
+on:
+  push:
+    branches: [main, gdp-cleanup-v2]
+  pull_request:
+    branches: [main]
+
+jobs:
+  software-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile Python sources
+        run: python -m compileall -q .
+
+      - name: Test traffic-light state machine
+        run: python test_traffic_light.py

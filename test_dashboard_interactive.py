@@ -482,9 +482,10 @@ check("it states the group objective", project.GROUP_OBJECTIVE[:40] in front)
 
 # One card per member, filled or not: a missing card would silently drop
 # somebody from the group rather than showing an obvious gap.
+team_card_count = front.count('class="team-card')
 check("every member has a card",
-      front.count('class="team-card') == len(project.TEAM),
-      f"{front.count('class=\"team-card')} cards for {len(project.TEAM)} members")
+      team_card_count == len(project.TEAM),
+      f"{team_card_count} cards for {len(project.TEAM)} members")
 check("every real name is shown",
       all(m.name in front for m in project.TEAM if m.filled))
 check("unfilled slots are marked, not hidden",
