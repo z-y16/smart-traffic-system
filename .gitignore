@@ -37,6 +37,25 @@ SmartTrafficSystem/logs/*
 traffic_all_sessions.csv
 traffic_all_sessions.xlsx
 traffic_all_vehicles.csv
+traffic_history.csv
+traffic_history.xlsx
+traffic_vehicles.csv
+
+# ---- Local / stale calibration backups ----
+speed_calibration_before_*.json
+
+# ---- Academic / submission artifacts ----
+251212-APU-GDP Students Handbook*.pdf
+APU-Logo.png
+GDP Presentation Final*.pptx
+GDP_*Poster*.pdf
+PRESENTING.md
+REPORT_Zeyad_CV_Integration_LED_LCD.md
+poster example*.jpeg
+make_group_poster.py
+make_poster.py
+intersection_*.pdf
+make_intersection_pdf.py
 
 # ---- Scratch / superseded ----
 _to_delete/
