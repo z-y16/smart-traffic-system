@@ -59,6 +59,7 @@ detection.png
 snapshot_*.png
 
 # ---- Machine-local ----
+.claude/settings.json
 .claude/settings.local.json
 .DS_Store
 Thumbs.db
