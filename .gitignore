@@ -8,13 +8,14 @@ out_demo/
 *.mov
 *.mkv
 
-# ---- graphify / serena tooling (vendored checkouts with their own .git) ----
+# ---- Local developer tooling ----
 graphify/
 graphify-out/
 serena-src/
 graphify.zip
 .graphifyignore
-.claude/skills/graphify/
+.claude/
+CLAUDE.md
 
 # ---- Model weights: keep only the two project models in normal Git ----
 *.pt
@@ -59,7 +60,5 @@ detection.png
 snapshot_*.png
 
 # ---- Machine-local ----
-.claude/settings.json
-.claude/settings.local.json
 .DS_Store
 Thumbs.db
