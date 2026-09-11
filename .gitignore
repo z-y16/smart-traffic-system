@@ -1,5 +1,6 @@
-# ---- Video footage (12 GB, most files exceed GitHub's 100 MB limit) ----
+# ---- Video footage / generated media ----
 uploads/
+videos/
 vedios/
 out_demo/
 *.mp4
@@ -7,14 +8,14 @@ out_demo/
 *.mov
 *.mkv
 
-# ---- graphify / serena tooling (vendored checkouts with their own .git) ----
+# ---- Local analysis tooling ----
 graphify/
 graphify-out/
 serena-src/
 graphify.zip
 .graphifyignore
 
-# ---- Model weights: keep only yolo11m.pt (default) + emergency_cls.pt (custom) ----
+# ---- Model weights: keep only project models ----
 *.pt
 !yolo11m.pt
 !emergency_cls.pt
@@ -28,7 +29,14 @@ venv/
 env/
 *.egg-info/
 
-# ---- Generated run output ----
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- Runtime data ----
+SmartTrafficSystem/data/*.db
+SmartTrafficSystem/data/settings.json
 sessions/
 logs/
 *.log
@@ -44,6 +52,17 @@ traffic_vehicles.csv
 # ---- Local / stale calibration backups ----
 speed_calibration_before_*.json
 
+# ---- Physical prototype / firmware artifacts ----
+lane_changer_uno/
+servo/
+traffic_controller_arduino/
+traffic_controller_esp32/
+SmartTrafficSystem/Traffic_light_gdp/
+*.ino
+MERGE_*.pdf
+intersection_*.pdf
+make_intersection_pdf.py
+
 # ---- Academic / submission artifacts ----
 251212-APU-GDP Students Handbook*.pdf
 APU-Logo.png
@@ -54,8 +73,12 @@ REPORT_Zeyad_CV_Integration_LED_LCD.md
 poster example*.jpeg
 make_group_poster.py
 make_poster.py
-intersection_*.pdf
-make_intersection_pdf.py
+
+# ---- Superseded documentation now consolidated in docs/SOFTWARE_GUIDE.md ----
+HOW_THE_WHOLE_SYSTEM_WORKS.txt
+HOW_EMERGENCY_DETECTION_WORKS.txt
+METRICS.md
+SmartTrafficSystem/PROJECT_SPEC.md
 
 # ---- Scratch / superseded ----
 _to_delete/
@@ -67,6 +90,7 @@ Screenshot*.png
 error.png
 detection.png
 snapshot_*.png
+SmartTrafficSystem/pages/* old.txt
 
 # ---- Machine-local ----
 .claude/
