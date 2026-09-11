@@ -5,11 +5,6 @@ traffic lives here: the title, the aim, the group, the measured results. It is
 separated from :mod:`config.settings` because none of it is a setting — nobody
 changes it between runs, and it must not end up in ``settings.json`` where a
 saved preference could quietly overwrite a member's name.
-
-**To put the group's names on the front page, edit `TEAM` below and nothing
-else.** The page reads the roster from here, the About page reads the same
-list, and until every name is filled in the front page says so in a banner
-rather than showing a placeholder to an examiner.
 """
 
 from __future__ import annotations
@@ -26,12 +21,9 @@ PROJECT_TITLE = (
     "with Adaptive Signal Optimization"
 )
 
-#: One sentence, for the line under the title. Longer than a tagline and
-#: shorter than the aim, because the front page has to be readable from the
-#: back of a room.
 PROJECT_TAGLINE = (
-    "A camera, a GPU and three microcontrollers that watch real traffic, "
-    "measure it in km/h, and change the signals to suit it."
+    "A camera, a GPU and embedded controllers that monitor traffic, measure "
+    "vehicle movement, and adapt the prototype traffic-control system."
 )
 
 PROJECT_AIM = (
@@ -53,8 +45,6 @@ THEME = "Smart City & AI Traffic Optimization"
 
 # ── The group ───────────────────────────────────────────────────────────────
 
-#: What an unfilled roster slot holds. The front page checks for this exact
-#: string, so changing it here changes nothing else.
 PLACEHOLDER = "Add name"
 
 
@@ -80,41 +70,36 @@ class Member:
         return "".join(word[0].upper() for word in parts[:2]) or "?"
 
 
-#: The group, in the order they appear on the page.
-#:
-#: Names are what needs filling in; the roles below are the five areas the
-#: work actually divided into, so reassign them freely — they are labels for
-#: the page, not a claim about who did what.
 TEAM: tuple[Member, ...] = (
     Member(
         name="Zeyad Khairy",
-        role="Computer Vision & Detection",
-        contribution="Vehicle detection and tracking, km/h speed measurement "
-                     "from road-plane calibration, and the congestion index.",
+        role="AI & Computer Vision Lead",
+        contribution="Vehicle detection and tracking, traffic analytics, speed "
+                     "measurement, emergency-vehicle vision and CSV output.",
     ),
     Member(
-        name=PLACEHOLDER,
+        name="Abdulrahman Osama",
         role="Dashboard & System Integration",
-        contribution="The Streamlit control centre, the database, telemetry "
-                     "logging and the link to the CV node.",
+        contribution="Dashboard integration, live system status, hardware links "
+                     "and presentation of traffic analytics.",
     ),
     Member(
-        name=PLACEHOLDER,
-        role="Hardware & Control",
-        contribution="The ESP32 hub, the Arduino signal heads, the servo lane "
-                     "changer, the LED strip and the LCDs.",
+        name="Naif Mohammed",
+        role="Embedded Firmware",
+        contribution="Microcontroller firmware, traffic-light control logic and "
+                     "servo/lane-control integration.",
     ),
     Member(
-        name=PLACEHOLDER,
-        role="Emergency Vehicle Priority",
-        contribution="Flashing-beacon detection, livery recognition, and the "
-                     "priority response that clears a lane.",
+        name="Anfaz Mohammed",
+        role="Power & Electronics",
+        contribution="LED driving, prototype wiring, power distribution and "
+                     "electrical integration of the road model.",
     ),
     Member(
-        name=PLACEHOLDER,
-        role="Testing, Calibration & Documentation",
-        contribution="Speed calibration, the automated test suites, the "
-                     "measured metrics and the report.",
+        name="Adam Becheikh",
+        role="Mechanical Prototype",
+        contribution="Road-model construction, lane layout and mechanical "
+                     "integration of the physical prototype.",
     ),
 )
 
@@ -140,15 +125,11 @@ class Result:
     note: str
 
 
-#: The four figures worth putting on a front page. Every one of them is in
-#: METRICS.md with the method that produced it; the notes are what stops a
-#: number being read as a stronger claim than it is.
 HEADLINE_RESULTS: tuple[Result, ...] = (
-    Result("36.6 fps", "Detector throughput", "yolo11m @ 1280 px, FP16, RTX 4050"),
+    Result("36.6 fps", "Detector throughput", "YOLO11m @ 1280 px, FP16, RTX 4050"),
     Result("±5%", "Speed accuracy", "calibrated — exact against ground truth"),
     Result("0", "False alarms, night footage", "down from 29% of all traffic"),
     Result("833", "Automated checks", "across 7 suites"),
 )
 
-#: When the figures above were measured, and on what.
 MEASURED_ON = "9 August 2026 · RTX 4050 laptop GPU, FP16"
