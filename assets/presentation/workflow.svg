@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" role="img" aria-labelledby="title desc">
+<title id="title">Smart Traffic software workflow</title>
+<desc id="desc">Video enters YOLO11m detection and BoT-SORT tracking. Traffic measurements feed congestion-driven signal states; emergency recognition and flashing-beacon confirmation feed a separate priority state. Both measurements and emergency telemetry reach the CV API node, which exposes a Streamlit dashboard and CSV or Excel session analytics.</desc>
+<rect width="720" height="480" fill="#101417"/>
+<g font-family="Segoe UI, DejaVu Sans, Arial, sans-serif" text-anchor="middle">
+<text x="360" y="37" font-size="28" font-weight="700" fill="#F3F6F7">Software Workflow</text>
+<polyline points="360,105 360,127" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="360.00,127.00 356.86,121.88 363.14,121.88" fill="#526168"/>
+<polyline points="360,183 360,202 183,202 183,220" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="183.00,220.00 179.86,214.88 186.14,214.88" fill="#526168"/>
+<polyline points="360,183 360,202 537,202 537,220" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="537.00,220.00 533.86,214.88 540.14,214.88" fill="#526168"/>
+<polyline points="183,286 183,315" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="183.00,315.00 179.86,309.88 186.14,309.88" fill="#526168"/>
+<polyline points="537,286 537,315" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="537.00,315.00 533.86,309.88 540.14,309.88" fill="#526168"/>
+<polyline points="28,253 16,253 16,384 238,384 238,415" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="238.00,415.00 234.86,409.88 241.14,409.88" fill="#526168"/>
+<polyline points="692,253 704,253 704,384 482,384 482,415" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="482.00,415.00 478.86,409.88 485.14,409.88" fill="#526168"/>
+<polyline points="183,363 183,377 300,377 300,402" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="300.00,402.00 296.86,396.88 303.14,396.88" fill="#526168"/>
+<polyline points="537,363 537,377 420,377 420,402" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="420.00,402.00 416.86,396.88 423.14,396.88" fill="#526168"/>
+<polyline points="238,438 214,438" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="214.00,438.00 219.12,434.86 219.12,441.14" fill="#526168"/>
+<polyline points="482,438 506,438" fill="none" stroke="#526168" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="506.00,438.00 500.88,441.14 500.88,434.86" fill="#526168"/>
+<rect x="196" y="57" width="328" height="48" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M208,58 H512" stroke="#7FD4DF" stroke-width="2"/>
+<text x="360.0" y="89.0" font-size="22" font-weight="700" fill="#F3F6F7">Camera / Video / Stream</text>
+<rect x="142" y="127" width="436" height="56" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M154,128 H566" stroke="#7FD4DF" stroke-width="2"/>
+<text x="360.0" y="152.0" font-size="24" font-weight="700" fill="#F3F6F7">YOLO11m + BoT-SORT</text>
+<text x="360.0" y="174.0" font-size="20" fill="#BCC7CC">Vehicle detection + stable tracking</text>
+<rect x="28" y="220" width="310" height="66" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M40,221 H326" stroke="#68D5AF" stroke-width="2"/>
+<text x="183.0" y="250.0" font-size="22" font-weight="700" fill="#F3F6F7">Traffic measurements</text>
+<text x="183.0" y="272.0" font-size="20" fill="#BCC7CC">Speed / counts / congestion</text>
+<rect x="382" y="220" width="310" height="66" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M394,221 H680" stroke="#F3BE65" stroke-width="2"/>
+<text x="537.0" y="250.0" font-size="21" font-weight="700" fill="#F3F6F7">Emergency recognition</text>
+<text x="537.0" y="272.0" font-size="20" fill="#BCC7CC">Livery + flashing-beacon check</text>
+<rect x="50" y="315" width="266" height="48" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M62,316 H304" stroke="#68D5AF" stroke-width="2"/>
+<text x="183.0" y="336.0" font-size="21" font-weight="700" fill="#F3F6F7">Signal state</text>
+<text x="183.0" y="358.0" font-size="20" fill="#BCC7CC">Congestion-driven phases</text>
+<rect x="404" y="315" width="266" height="48" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M416,316 H658" stroke="#F3BE65" stroke-width="2"/>
+<text x="537.0" y="336.0" font-size="21" font-weight="700" fill="#F3F6F7">Priority state</text>
+<text x="537.0" y="358.0" font-size="20" fill="#BCC7CC">Beacon-confirmed by default</text>
+<rect x="238" y="402" width="244" height="58" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M250,403 H470" stroke="#7FD4DF" stroke-width="2"/>
+<text x="360.0" y="428.0" font-size="22" font-weight="700" fill="#F3F6F7">CV / API node</text>
+<text x="360.0" y="450.0" font-size="20" fill="#BCC7CC">Video + telemetry</text>
+<rect x="28" y="410" width="186" height="48" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M40,411 H202" stroke="#7FD4DF" stroke-width="2"/>
+<text x="121.0" y="431.0" font-size="21" font-weight="700" fill="#F3F6F7">Dashboard</text>
+<text x="121.0" y="453.0" font-size="20" fill="#BCC7CC">Streamlit</text>
+<rect x="506" y="410" width="186" height="48" rx="7" fill="#1C2327" stroke="#435056"/>
+<path d="M518,411 H680" stroke="#7FD4DF" stroke-width="2"/>
+<text x="599.0" y="431.0" font-size="21" font-weight="700" fill="#F3F6F7">CSV / Excel</text>
+<text x="599.0" y="453.0" font-size="20" fill="#BCC7CC">Session analytics</text>
+</g>
+</svg>

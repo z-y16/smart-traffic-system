@@ -4,6 +4,23 @@ Computer-vision traffic analytics and adaptive signal-control software built wit
 
 This repository is intentionally **software-only**. Physical prototype drawings, Arduino/ESP32 firmware, servo sketches, coursework files and generated runtime data are not kept here.
 
+## Demo & Software Workflow
+
+<table>
+  <tr>
+    <th width="50%">Vehicle Detection Demo</th>
+    <th width="50%">System Workflow & Architecture</th>
+  </tr>
+  <tr>
+    <td><img src="assets/presentation/detection.gif" alt="Recorded road footage with tracked vehicles and speed annotations" width="100%"></td>
+    <td><img src="assets/presentation/workflow.gif" alt="Animated software workflow from video input to traffic measurements, emergency analysis, signal state, dashboard and exports" width="100%"></td>
+  </tr>
+</table>
+
+The detection demo uses recorded traffic footage. The workflow animation is a schematic of the default software flow, not synchronized live telemetry.
+
+[Watch the full detection and dashboard demo](assets/presentation/demo.mp4) · [View the static workflow](assets/presentation/workflow.png)
+
 ## Main features
 
 - YOLO11m vehicle detection and BoT-SORT tracking
@@ -19,26 +36,26 @@ This repository is intentionally **software-only**. Physical prototype drawings,
 
 ## Software architecture
 
-```text
-Camera / Video / Stream
-        |
-        v
-Video Source
-        |
-        v
-YOLO11m -> Tracking -> Speed -> Congestion -> Emergency Recognition
-        |
-        +----> Signal-State Logic
-        +----> Logs / Analytics
-        |
-        v
-CV / API Node
-        |
-        v
-Streamlit Dashboard
+```mermaid
+flowchart TD
+    source["Camera / Video / Network Stream"] --> frames["Video Source"]
+    frames --> detection["YOLO11m Vehicle Detection"]
+    detection --> tracking["BoT-SORT Tracking"]
+    tracking --> metrics["Speed, Counts & Congestion"]
+    tracking --> emergency["Vehicle Recognition & Flashing-Beacon Analysis"]
+    metrics --> signals["Adaptive Signal-State Logic"]
+    emergency --> priority["Emergency Priority State"]
+    metrics --> logs["CSV / Excel Session Analytics"]
+    signals --> api["CV / API Node"]
+    metrics --> api
+    emergency --> api
+    priority --> api
+    api --> dashboard["Streamlit Dashboard"]
 ```
 
 The computer-vision node is implemented mainly in `broadcast_server.py`, `traffic_vision.py` and `video_source.py`. The dashboard and supporting services are under `SmartTrafficSystem/`.
+
+Traffic measurements drive the signal state machine. Emergency recognition and beacon verification produce a separate priority state; recognizing an emergency-style vehicle is not the same as detecting an active flashing beacon.
 
 ## Quick start
 
