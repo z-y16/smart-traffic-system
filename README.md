@@ -19,7 +19,7 @@ This repository is intentionally **software-only**. Physical prototype drawings,
 
 The detection demo uses recorded traffic footage. The workflow animation is a schematic of the default software flow, not synchronized live telemetry.
 
-[Watch the full detection and dashboard demo](assets/presentation/demo.mp4) · [View the static workflow](assets/presentation/workflow.png)
+[Download the full detection and dashboard demo](https://github.com/z-y16/smart-traffic-system/raw/refs/heads/main/assets/presentation/demo.mp4) · [View the static workflow](assets/presentation/workflow.png)
 
 ## Main features
 
