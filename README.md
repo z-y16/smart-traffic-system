@@ -19,13 +19,13 @@ This repository focuses on the **software implementation**. Physical-controller 
   </tr>
   <tr>
     <td><img src="assets/presentation/detection.gif" alt="Recorded road footage with tracked vehicles and speed annotations" width="100%"></td>
-    <td><img src="assets/presentation/workflow.gif" alt="Animated software workflow from video input to traffic measurements, emergency analysis, signal state, dashboard and exports" width="100%"></td>
+    <td><img src="assets/presentation/workflow.gif?v=2" alt="Animated software workflow from video input to traffic measurements, emergency analysis, signal state, dashboard and exports" width="100%"></td>
   </tr>
 </table>
 
 The detection demo uses recorded traffic footage. The workflow animation is a schematic of the default software flow, not synchronized live telemetry.
 
-[Download the full detection and dashboard demo](https://github.com/z-y16/smart-traffic-system/raw/refs/heads/main/assets/presentation/demo.mp4) · [View the static workflow](assets/presentation/workflow.png)
+[Download the full detection and dashboard demo](https://github.com/z-y16/smart-traffic-system/raw/refs/heads/main/assets/presentation/demo.mp4) · [View the static workflow](assets/presentation/workflow.png?v=2)
 
 Read the [project manuscript (PDF)](docs/Smart_Traffic_Project_Manuscript.pdf) for the full system design, evaluation and team contributions. This is an unpublished, IEEE-format project report, not an IEEE publication.
 
