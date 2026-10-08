@@ -188,4 +188,4 @@ The default dashboard port is `8501`; the CV/API node uses `8502`.
 
 ## Repository policy
 
-The repository is intentionally software-focused. It excludes physical-prototype drawings, Arduino/ESP32 firmware, servo sketches, coursework presentation files, generated runtime databases, session outputs, large local videos, and machine-specific tool configuration.
+The repository is intentionally software-focused. It excludes physical-prototype drawings, Arduino/ESP32 firmware, servo sketches, coursework presentation files, generated runtime databases, session outputs, large local videos, and machine-specific tool configuration. The public project manuscript and curated demo/workflow media are included to explain the software and its role in the broader group prototype.

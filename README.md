@@ -1,8 +1,14 @@
 # Smart Traffic Management Software
 
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB)](https://www.python.org/)
+[![YOLO](https://img.shields.io/badge/YOLO-11m-00B8C4)](https://github.com/ultralytics/ultralytics)
+[![Tracking](https://img.shields.io/badge/Tracking-BoT--SORT-7C6BC7)](docs/SOFTWARE_GUIDE.md#vehicle-detection-and-tracking)
+[![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit-E34B4B)](https://streamlit.io/)
+[![Paper](https://img.shields.io/badge/Paper-Manuscript_Available-4A9F46)](docs/Smart_Traffic_Project_Manuscript.pdf)
+
 Computer-vision traffic analytics and adaptive signal-control software built with Python, YOLO11m, OpenCV and Streamlit.
 
-This repository is intentionally **software-only**. Physical prototype drawings, Arduino/ESP32 firmware, servo sketches, coursework files and generated runtime data are not kept here.
+This repository focuses on the **software implementation**. Physical-controller firmware, mechanical design files and generated runtime data are excluded. The linked project manuscript describes the broader group prototype.
 
 ## Demo & Software Workflow
 
@@ -20,6 +26,8 @@ This repository is intentionally **software-only**. Physical prototype drawings,
 The detection demo uses recorded traffic footage. The workflow animation is a schematic of the default software flow, not synchronized live telemetry.
 
 [Download the full detection and dashboard demo](https://github.com/z-y16/smart-traffic-system/raw/refs/heads/main/assets/presentation/demo.mp4) · [View the static workflow](assets/presentation/workflow.png)
+
+Read the [project manuscript (PDF)](docs/Smart_Traffic_Project_Manuscript.pdf) for the full system design, evaluation and team contributions. This is an unpublished, IEEE-format project report, not an IEEE publication.
 
 ## Main features
 
@@ -88,7 +96,8 @@ The dashboard normally runs on port `8501`; the CV/API node uses port `8502`.
 smart-traffic-system/
 ├── README.md
 ├── docs/
-│   └── SOFTWARE_GUIDE.md       # architecture, pipeline, testing and metrics notes
+│   ├── SOFTWARE_GUIDE.md       # architecture, pipeline, testing and metrics notes
+│   └── Smart_Traffic_Project_Manuscript.pdf
 ├── start.py                    # starts the complete software stack
 ├── broadcast_server.py         # CV node and local API
 ├── traffic_vision.py           # detection, tracking, speed and congestion
@@ -99,7 +108,7 @@ smart-traffic-system/
 ├── calibrate_speed.py          # speed-calibration utility
 ├── SmartTrafficSystem/         # Streamlit dashboard and backend
 ├── trackers/                   # tracker configuration
-├── assets/                     # software test assets
+├── assets/                     # software test assets and presentation media
 ├── test_*.py                   # automated software tests
 ├── yolo11m.pt                  # main vehicle detector
 ├── emergency_cls.pt            # emergency classification model
